@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources: 
+  - db/db-config.yaml
+  - db/db-depl.yaml
+  - db/db-service.yaml
+  - message-broker/rabbitmq-config.yaml
+  - message-broker/rabbitmq-depl.yaml
+  - message-broker/rabbitmq-service.yaml
+  - nginx/nginx-depl.yaml
+  - nginx/nginx-service.yaml

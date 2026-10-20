@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kustomize-rabbitmq-credentials
+data:
+  username: "redis"
+  password: "password123"

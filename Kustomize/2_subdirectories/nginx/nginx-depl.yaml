@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kustomize-nginx-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: kustomize-nginx
+  template:
+    metadata:
+      labels:
+        component: kustomize-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx

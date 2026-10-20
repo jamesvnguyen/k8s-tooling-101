@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kustomize-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: kustomize-db
+  template:
+    metadata:
+      labels:
+        component: kustomize-db
+    spec:
+      containers:
+        - name: mongo
+          image: mongo
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: kustomize-db-credentials
+                  key: username
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: kustomize-db-credentials
+                  key: password

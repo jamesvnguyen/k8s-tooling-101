@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Suffix only the nginx objects: nginx-service -> nginx-service-web
+nameSuffix: -web
+
+labels:
+  # Selector label: added to metadata, pod template and selectors.
+  - pairs:
+      tier: frontend
+    includeSelectors: true
+  # Pod label: added to metadata and the pod template, but not selectors.
+  - pairs:
+      exposure: nodeport
+    includeTemplates: true
+
+resources:
+  - nginx-depl.yaml
+  - nginx-service.yaml

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-credentials
+data:
+  username: "redis"
+  password: "password123"
