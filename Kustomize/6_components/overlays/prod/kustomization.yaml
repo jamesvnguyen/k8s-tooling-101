@@ -1,0 +1,54 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# prod: hardening and HA, no admin UI. Anything only prod needs is a
+# plain patch here rather than a component.
+namespace: prod
+
+# Plain resources only prod needs go straight into the overlay. One
+# environment isn't worth a component; two or more would be.
+resources:
+  - ../../base
+  - namespace.yaml
+  - db-network-policy.yaml
+
+components:
+  - ../../components/db-internal
+  - ../../components/resource-limits
+  - ../../components/high-availability
+
+labels:
+  - pairs:
+      environment: prod
+
+images:
+  - name: nginx
+    newTag: "1.27.2"
+
+# The overlay's own patches run after every component, so this wins
+# over the 3 replicas set by high-availability.
+patches:
+  - target:
+      kind: Deployment
+      name: nginx-deployment
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 5
+
+  # Renames run last and still match by the base name.
+  - target:
+      kind: Deployment
+      name: nginx-deployment
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: prod-nginx-deployment
+
+  - target:
+      kind: Service
+      name: nginx-service
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: prod-nginx-service

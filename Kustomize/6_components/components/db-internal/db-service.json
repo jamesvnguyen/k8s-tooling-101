@@ -1,0 +1,4 @@
+[
+  { "op": "test",   "path": "/spec/type", "value": "NodePort" },
+  { "op": "remove", "path": "/spec/type" }
+]

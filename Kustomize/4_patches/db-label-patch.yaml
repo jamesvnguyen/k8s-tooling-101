@@ -1,0 +1,7 @@
+- op: add
+  path: /spec/template/metadata/labels/cluster
+  value: staging
+
+- op: add
+  path: /spec/template/metadata/labels/feature
+  value: db

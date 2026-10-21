@@ -1,0 +1,68 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# prod: everything staging changes, plus more replicas, resource
+# requests on nginx and a NetworkPolicy in front of MongoDB.
+namespace: prod
+
+# Plain resources only prod needs go straight into the overlay.
+resources:
+  - ../../base
+  - namespace.yaml
+  - db-network-policy.yaml
+
+labels:
+  - pairs:
+      environment: prod
+      cost-centre: platform
+
+images:
+  - name: nginx
+    newTag: "1.27.2"
+
+replicas:
+  - name: nginx-deployment
+    count: 5
+
+# The rename and db-service patches are copied from staging. That copy
+# is what 6_components removes.
+patches:
+  - target:
+      kind: Deployment
+      name: nginx-deployment
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: prod-nginx-deployment
+
+  - target:
+      kind: Service
+      name: nginx-service
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: prod-nginx-service
+
+  - target:
+      kind: Service
+      name: db-service
+    patch: |-
+      - op: remove
+        path: /spec/type
+
+  # Strategic merge: requests on the nginx container. Matched by the
+  # base name, the same as the JSON 6902 targets above.
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: nginx-deployment
+      spec:
+        template:
+          spec:
+            containers:
+              - name: nginx
+                resources:
+                  requests:
+                    cpu: 250m
+                    memory: 256Mi

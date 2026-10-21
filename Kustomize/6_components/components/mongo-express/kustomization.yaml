@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+# Adds a web UI for MongoDB. Two new resources, no patches.
+# It finds the database by Service name and reads the same ConfigMap
+# the db Deployment uses, so it only works alongside the base.
+resources:
+  - mongo-express-depl.yaml
+  - mongo-express-service.yaml

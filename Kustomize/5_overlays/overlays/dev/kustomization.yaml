@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# dev: the base as it is, in its own namespace. Every name gets a dev-
+# prefix from the namePrefix transformer.
+namespace: dev
+
+resources:
+  - ../../base
+  - namespace.yaml
+
+# A transformer hits every resource, so this renames all eight objects
+# from the base, not just nginx (the Namespace is left alone). References
+# are updated too: the configMapKeyRef in db-deployment now points at
+# dev-db-credentials.
+namePrefix: dev-
+
+labels:
+  - pairs:
+      environment: dev

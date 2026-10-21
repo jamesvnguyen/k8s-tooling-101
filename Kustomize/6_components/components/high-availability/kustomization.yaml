@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+# A new resource and a patch together: three nginx replicas, spread
+# across nodes, and a PodDisruptionBudget so a node drain can't take
+# them all down at once.
+resources:
+  - nginx-pdb.yaml
+
+patches:
+  - path: nginx-spread.yaml

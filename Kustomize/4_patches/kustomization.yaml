@@ -1,0 +1,75 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# One project, no environments. The manifests are the ones from
+# 3_transformers without the transformers, and every change below is a patch.
+resources:
+  - db/
+  - message-broker/
+  - nginx/
+
+patches:
+  # 1. Inline JSON 6902, one op: scale nginx from 1 to 3.
+  - target:
+      kind: Deployment
+      name: nginx-deployment
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 3
+
+  # 2. JSON 6902 from a file: add two labels to the db pods.
+  #    The file is only a list of ops, so the target block says where they go.
+  - target:
+      kind: Deployment
+      name: db-deployment
+    path: db-label-patch.yaml
+
+  # 3. Inline JSON 6902, two ops on one resource: move the db Service to
+  #    port 30000 and pin its NodePort. targetPort stays 27017, because
+  #    that's the port MongoDB listens on inside the pod.
+  - target:
+      kind: Service
+      name: db-service
+    patch: |-
+      - op: replace
+        path: /spec/ports/0/port
+        value: 30000
+
+      - op: add
+        path: /spec/ports/0/nodePort
+        value: 30017
+
+  # 4. Strategic merge from a file: no target block, the file names the
+  #    resource itself. Adds an env var and a resource request to RabbitMQ.
+  - path: rabbitmq-patch.yaml
+
+  # 5. Inline JSON 6902: rename the nginx Deployment. It's last on purpose:
+  #    patch 1 targets the old name. Kustomize remembers the original name,
+  #    so this would work in either order, but last is easier to follow.
+  - target:
+      kind: Deployment
+      name: nginx-deployment
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: web-deployment
+
+  # 6. Inline JSON 6902, replace a key in a dictionary: fix the RabbitMQ
+  #    username. "redis" was a copy-paste leftover in the ConfigMap.
+  - target:
+      kind: ConfigMap
+      name: rabbitmq-credentials
+    patch: |-
+      - op: replace
+        path: /data/username
+        value: rabbit
+
+  # 7. Inline JSON 6902, remove a key from a dictionary: drop "type" from
+  #    nginx-service so it falls back to the default, ClusterIP.
+  - target:
+      kind: Service
+      name: nginx-service
+    patch: |-
+      - op: remove
+        path: /spec/type
