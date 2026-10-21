@@ -1,6 +1,8 @@
-# Kustomize Part Two
+# Kustomize Basics Pt. 2
 
-Picks up where Kustomize Basics stopped. Part one changed every resource at once with transformers. This part changes specific resources with patches, then splits configuration into a shared base and per-environment overlays, then pulls optional features out into components that each environment can switch on or off
+Picks up where Kustomize Basics stopped.
+
+Part one changed every resource at once with transformers. This part changes specific resources with patches, then splits configuration into a shared base and per-environment overlays, then pulls optional features out into components that each environment can switch on or off
 
 Covers: patches (JSON 6902 and strategic merge, dictionaries and lists, inline and in files, targeting), overlays, and components
 
