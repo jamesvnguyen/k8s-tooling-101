@@ -3,7 +3,7 @@ Beginner friendly Kubernetes lessons with practical exercises
 
 ## About
 
-I planned and wrote these lessons and labs myself. I then used Claude to touch them up. Mostly to tighten the wording, check that the docs match the lab files, and make sure each lab builds
+I planned and wrote these lessons, built the labs myself, then used Claude to touch them up. Mostly to tighten the wording, check that the docs match the lab files, and make sure each lab builds
 
 ## Lessons
 
