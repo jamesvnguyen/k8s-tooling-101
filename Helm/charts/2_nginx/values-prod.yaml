@@ -1,0 +1,13 @@
+environment: prod
+replicaCount: 10
+
+image:
+  tag: "1.27.2"
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+extraLabels:
+  cost-centre: platform

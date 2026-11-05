@@ -1,0 +1,10 @@
+apiVersion: v2
+name: nginx
+description: The NGINX web Deployment from the Kustomize lessons, as a Helm chart.
+type: application
+# Chart version: bump this every time anything in the chart changes
+version: 0.1.0
+# App version: the nginx release this chart deploys by default
+appVersion: "1.27.2"
+maintainers:
+  - name: Rancher Team

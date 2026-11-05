@@ -1,0 +1,3 @@
+# Defaults. Override with --set or -f at install/upgrade time.
+greeting: Hello
+audience: world

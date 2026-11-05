@@ -1,0 +1,8 @@
+apiVersion: v2
+name: hello-world
+description: The smallest useful chart. One ConfigMap, filled in from values and built-in objects.
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+maintainers:
+  - name: Rancher Team

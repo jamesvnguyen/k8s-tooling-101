@@ -1,0 +1,4 @@
+Release {{ .Release.Name }} is at revision {{ .Release.Revision }}.
+
+Read the message:
+  kubectl get configmap {{ .Release.Name }}-hello -n {{ .Release.Namespace }} -o jsonpath='{.data.message}{"\n"}'

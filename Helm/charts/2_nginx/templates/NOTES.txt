@@ -1,0 +1,5 @@
+{{ .Release.Name }} is running {{ .Values.replicaCount }} nginx replica(s) in {{ .Release.Namespace }} ({{ .Values.environment }}).
+
+Open the page:
+  kubectl port-forward -n {{ .Release.Namespace }} svc/{{ include "nginx.fullname" . }} 8080:{{ .Values.service.port }}
+  then browse to http://localhost:8080

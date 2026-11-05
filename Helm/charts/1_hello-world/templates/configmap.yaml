@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  # .Release.Name is whatever name you pass to helm install
+  name: {{ .Release.Name }}-hello
+data:
+  # From values.yaml (or your overrides)
+  message: "{{ .Values.greeting }}, {{ .Values.audience }}!"
+  # From the release: changes on every install, upgrade and rollback
+  release: "{{ .Release.Name }}"
+  namespace: "{{ .Release.Namespace }}"
+  revision: "{{ .Release.Revision }}"
+  # From Chart.yaml
+  chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"

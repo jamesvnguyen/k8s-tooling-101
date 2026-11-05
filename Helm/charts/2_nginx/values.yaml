@@ -1,0 +1,31 @@
+# Defaults for every environment. values-stage.yaml and values-prod.yaml
+# hold only what's different.
+
+environment: dev
+replicaCount: 1
+
+image:
+  repository: nginx
+  # Set to "" to fall back to the chart's appVersion (see templates/deployment.yaml)
+  tag: "1.27"
+
+# Shown on the web page, rendered into a ConfigMap
+page:
+  title: Hello from Helm
+  message: Rendered by Helm, served by nginx.
+  colour: steelblue
+
+service:
+  # ClusterIP or NodePort
+  type: ClusterIP
+  port: 80
+  # Only used when type is NodePort
+  nodePort: 30080
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Extra labels added to the Deployment. Empty by default.
+extraLabels: {}
