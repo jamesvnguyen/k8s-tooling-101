@@ -4,7 +4,7 @@ Picks up from the Kustomize lessons. Kustomize took finished YAML and changed it
 
 Covers: why Helm exists, charts, releases and revisions, installing someone else's chart, overriding values, writing your own chart (hello-world, then the nginx Deployment from the Kustomize lessons), template functions, pipelines, conditionals, `with`, `range`, named templates, and the upgrade/rollback lifecycle.
 
-Worked examples: `charts/1_hello-world/` (one ConfigMap, nothing else) and `charts/2_nginx/` (the `web` Deployment from Kustomize Basics section 1, as a chart). Every command below is run from `lessons/helm/`.
+Worked examples: `charts/1_hello-world/` (one ConfigMap, nothing else) and `charts/2_nginx/` (the `web` Deployment from Kustomize Basics section 1, as a chart). Every command below is run from the `Helm/` folder of this repo.
 
 The "Try it" parts are what we run in the session; section 11 has exercises for afterwards.
 
@@ -34,7 +34,7 @@ That solves duplication. It doesn't solve the rest of running an app:
 - **Kubernetes doesn't know what an "app" is.** It knows a Deployment, a Service, a ConfigMap. Nothing in the cluster says those three belong together, which version of the app they are, or what they looked like before last Tuesday's change.
 - **Upgrading is a pile of `kubectl apply` commands.** Remove a manifest from the folder and the old object just stays in the cluster.
 - **Going back is manual.** If the upgrade breaks, you need to know what was there before and re-apply it by hand.
-- **Third-party software ships as hundreds of files.** cert-manager, Rancher itself, monitoring stacks. Nobody wants to copy those YAML files around and edit them.
+- **Third-party software ships as hundreds of files.** cert-manager, ingress controllers, monitoring stacks. Nobody wants to copy those YAML files around and edit them.
 
 Helm treats the whole set of objects as one thing. Think of a support case where a customer says "monitoring broke after we upgraded it." Without Helm you're asking which of the 40 manifests changed, who applied them, and what they looked like before. With Helm you run `helm history`, see that revision 5 went out yesterday, diff it against revision 4, and roll back with one command while you figure out the root cause.
 
@@ -135,7 +135,7 @@ Same six differences, same result. The Helm file is shorter because the chart au
 | Release tracking and rollback | No | Yes |
 | Needs installing | No, built into `kubectl` | Yes |
 
-They aren't mutually exclusive. The usual split is Helm for third-party software (Rancher, cert-manager, monitoring) and either tool for in-house apps. Fleet can deploy both.
+They aren't mutually exclusive. The usual split is Helm for third-party software (cert-manager, ingress controllers, monitoring) and either tool for in-house apps. GitOps tools like Argo CD and Flux can deploy both.
 
 ---
 
@@ -298,7 +298,7 @@ Many charts are now published to container registries instead of (or as well as)
 helm install demo-oci oci://ghcr.io/stefanprodan/charts/podinfo -n lesson
 ```
 
-This is how SUSE Application Collection (AppCo) distributes charts, and the direction most projects are heading.
+A growing number of vendors distribute charts this way, and it's the direction most projects are heading.
 
 ### Removing it
 
@@ -336,7 +336,7 @@ Write the overrides to a file and pass it with `-f` (long form `--values`):
 # my-values.yaml
 replicaCount: 2
 ui:
-  message: Hello from the Rancher team
+  message: Hello from the team
 ```
 
 ```bash
@@ -408,7 +408,7 @@ type: application
 version: 0.1.0
 appVersion: "1.0.0"
 maintainers:
-  - name: Rancher Team
+  - name: James Nguyen
 ```
 
 Every chart has exactly one, named exactly `Chart.yaml` (capital C, singular).
@@ -1053,14 +1053,14 @@ This is the part Kustomize doesn't do.
 ### Upgrade
 
 ```bash
-helm upgrade hello charts/1_hello-world -n lesson --set audience=Rancher
+helm upgrade hello charts/1_hello-world -n lesson --set audience=team
 kubectl get configmap hello-hello -n lesson -o jsonpath='{.data.message} (rev {.data.revision}){"\n"}'
 ```
 
 What it does: renders the chart again with the new values, works out what changed, and applies only that. A new revision is recorded.
-Good output: `REVISION: 2`, then `Hello, Rancher! (rev 2)`.
+Good output: `REVISION: 2`, then `Hello, team! (rev 2)`.
 
-> If you pass **any** `--set` or `-f` to `helm upgrade`, it starts from the **chart defaults** plus only what you passed this time, not from what's currently installed. `helm upgrade hello charts/1_hello-world -n lesson --set greeting=Hi` gives `Hi, world!`: the earlier `audience=Rancher` is gone. (An upgrade with no values flags at all quietly carries the previous values forward, which makes this easy to miss.) Pass the same `-f` files every time (this is why they belong in Git), or use `--reuse-values` to carry the previous overrides forward.
+> If you pass **any** `--set` or `-f` to `helm upgrade`, it starts from the **chart defaults** plus only what you passed this time, not from what's currently installed. `helm upgrade hello charts/1_hello-world -n lesson --set greeting=Hi` gives `Hi, world!`: the earlier `audience=team` is gone. (An upgrade with no values flags at all quietly carries the previous values forward, which makes this easy to miss.) Pass the same `-f` files every time (this is why they belong in Git), or use `--reuse-values` to carry the previous overrides forward.
 
 
 ### History
@@ -1162,7 +1162,7 @@ After the session. Every exercise can be checked with `helm template` alone, no 
 
 ### Values
 
-1. Install `charts/1_hello-world` as a release called `practice` with the message `Hi, Rancher!` using a values file, not `--set`. Then upgrade it with `--set audience=everyone` and check which one won.
+1. Install `charts/1_hello-world` as a release called `practice` with the message `Hi, team!` using a values file, not `--set`. Then upgrade it with `--set audience=everyone` and check which one won.
 
 <details>
 <summary>Answer</summary>
@@ -1171,7 +1171,7 @@ After the session. Every exercise can be checked with `helm template` alone, no 
 
 ```yaml
 greeting: Hi
-audience: Rancher
+audience: team
 ```
 
 ```bash
@@ -1348,10 +1348,6 @@ Helm goes well beyond what fits in one session. If you want to keep going on you
   - Provenance and integrity: https://helm.sh/docs/topics/provenance/
   - Chart repository guide: https://helm.sh/docs/topics/chart_repository/
   - OCI registries: https://helm.sh/docs/topics/registries/
-- **Helm in Rancher**: how Apps (the Rancher UI's chart catalog), Fleet's `helm:` options in `fleet.yaml`, and SUSE Application Collection all use what's in this lesson.
-  - Rancher Apps & Marketplace: https://ranchermanager.docs.rancher.com/how-to-guides/new-user-guides/helm-charts-in-rancher
-  - `fleet.yaml` reference: https://fleet.rancher.io/ref-fleet-yaml
-  - SUSE Application Collection: https://docs.apps.rancher.io/
 
 ---
 
@@ -1366,4 +1362,3 @@ Helm goes well beyond what fits in one session. If you want to keep going on you
 - Chart best practices: https://helm.sh/docs/chart_best_practices/
 - Artifact Hub: https://artifacthub.io/
 - podinfo (demo chart): https://github.com/stefanprodan/podinfo
-- Rancher Apps & Marketplace: https://ranchermanager.docs.rancher.com/how-to-guides/new-user-guides/helm-charts-in-rancher

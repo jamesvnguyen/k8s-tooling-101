@@ -7,4 +7,4 @@ version: 0.1.0
 # App version: the nginx release this chart deploys by default
 appVersion: "1.27.2"
 maintainers:
-  - name: Rancher Team
+  - name: James Nguyen

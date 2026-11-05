@@ -27,9 +27,22 @@ I planned and wrote these lessons, built the labs myself, then used Claude to to
 
 Generators and garbage collection are next.
 
+### Helm
+
+[Helm Basics](Helm/2026-11-4-helm-basics.md): why Helm exists, how it compares to Kustomize, charts, releases and revisions, installing someone else's chart, overriding values, writing your own chart, template functions, pipelines, conditionals, `with`, `range`, named templates, and upgrade, history and rollback.
+
+| Lab | What it shows |
+|---|---|
+| [`1_hello-world`](Helm/charts/1_hello-world/) | The smallest useful chart: one ConfigMap, filled in from values and built-in objects |
+| [`2_nginx`](Helm/charts/2_nginx/) | The `web` Deployment from the Kustomize lessons as a chart, with `values-stage.yaml` and `values-prod.yaml` holding only what differs from the dev defaults |
+
 ## Running the labs
 
-All you need is `kubectl`. Kustomize is built into it. Clone the repo and run the commands from the lesson against a lab or test cluster:
+Clone the repo and run the commands from the lesson against a lab or test cluster.
+
+### Kustomize
+
+All you need is `kubectl`. Kustomize is built into it:
 
 ```bash
 kubectl kustomize Kustomize/1_basics   # print the YAML, touches nothing
@@ -42,4 +55,22 @@ The labs with environments are built per overlay, not from the lab root:
 ```bash
 kubectl kustomize Kustomize/5_overlays/overlays/dev
 kubectl apply -k Kustomize/6_components/overlays/prod
+```
+
+### Helm
+
+You need `helm` as well as `kubectl`. Section 4 of the lesson covers installing it.
+
+```bash
+helm lint Helm/charts/1_hello-world                       # check the chart
+helm template hello Helm/charts/1_hello-world -n lesson   # print the YAML, touches nothing
+helm install hello Helm/charts/1_hello-world -n lesson --create-namespace   # deploy it
+helm uninstall hello -n lesson                            # clean up
+```
+
+The nginx chart takes a values file per environment, layered over the defaults:
+
+```bash
+helm template web Helm/charts/2_nginx -f Helm/charts/2_nginx/values-prod.yaml
+helm install web Helm/charts/2_nginx -n lesson -f Helm/charts/2_nginx/values-stage.yaml
 ```
