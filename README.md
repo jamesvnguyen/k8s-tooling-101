@@ -29,7 +29,7 @@ Generators and garbage collection are next.
 
 ### Helm
 
-[Helm Basics](Helm/2026-11-4-helm-basics.md): why Helm exists, how it compares to Kustomize, charts, releases and revisions, installing someone else's chart, overriding values, writing your own chart, template functions, pipelines, conditionals, `with`, `range`, named templates, and upgrade, history and rollback.
+[Helm Basics](Helm/2026-11-04-helm-basics.md): why Helm exists, how it compares to Kustomize, charts, releases and revisions, installing someone else's chart, overriding values, writing your own chart, template functions, pipelines, conditionals, `with`, `range`, named templates, and upgrade, history and rollback.
 
 | Lab | What it shows |
 |---|---|
