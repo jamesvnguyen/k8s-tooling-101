@@ -1,6 +1,6 @@
 # Helm Basics
 
-Picks up from the Kustomize lessons. Kustomize took finished YAML and changed it. Helm takes the opposite approach: write the YAML once with blanks in it, and fill the blanks in at install time. Helm is also a package manager, so it tracks every install as a release you can upgrade and roll back.
+Helm packages your manifests as templates and tracks every install so you can upgrade and roll back.
 
 Covers: why Helm exists, charts, releases and revisions, installing someone else's chart, overriding values, writing your own chart (hello-world, then the nginx Deployment from the Kustomize lessons), template functions, pipelines, conditionals, `with`, `range`, named templates, and the upgrade/rollback lifecycle.
 
